@@ -1,5 +1,8 @@
 #ifndef __PIANOTRANSCRIPTION_AUDIO_INCLUDE__
 #define __PIANOTRANSCRIPTION_AUDIO_INCLUDE__
+
+#include <stdio.h>
+
 // WAV header spec information:
 // https://docs.fileformat.com/audio/wav/
 
@@ -25,6 +28,6 @@ typedef struct wav_header {
     // uint8_t bytes[]; // Remainder of wave file is bytes
 } wav_header;
 
-void say_hello();
+read_audio_file(const char *filename, wav_header *header, uint8_t *data);
 
 #endif

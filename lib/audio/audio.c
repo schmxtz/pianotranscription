@@ -1,8 +1,6 @@
+#include <stdint.h>
+
 #include "audio.h"
 
 
-void say_hello() {
-    printf("Hello World");
-}
-
-
+read_audio_file(const char *filename, wav_header *header, uint8_t *data);
