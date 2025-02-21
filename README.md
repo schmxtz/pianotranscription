@@ -9,7 +9,7 @@ pianotranscription: open-source, dependency-free and fast way to generate piano 
 
 <h3>
 
-[Homepage](schmxtz.github.io) | [Documentation](https://github.com/schmxtz/pianotranscription) | [Discord](https://discord.gg/96eYjpAgSE)
+[Homepage](https://schmxtz.github.io) | [Documentation](https://github.com/schmxtz/pianotranscription) | [Discord](https://discord.gg/96eYjpAgSE)
 
 </h3>
 </div>
