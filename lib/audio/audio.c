@@ -7,18 +7,48 @@ void read_audio_file(const char *filename, wav_header *header, uint8_t *data) {
         fprintf(stderr, "Error: Could not open file %s\n", filename);
         exit(1);
     }
+
     // Read header
     fread(header, sizeof(wav_header), 1, file);
+    debug_print_header(header);
 
-    // Read following id 
-    // Read data
-    // data = (uint8_t *)malloc(header->data_bytes);
-    // if (data == NULL) {
-    //     fprintf(stderr, "Error: Could not allocate memory for data\n");
-    //     exit(1);
-    // }
-    // fread(data, header->data_bytes, 1, file);
+    // For now don't care about other chunk ids except data
+    char chunk_id[4];
+    uint8_t data_found = 0;
+    while (fread(chunk_id, 4, 1, file) == 1) {
+        if (strncmp(chunk_id, "data", 4) == 0) {
+            data_found = 1;
+            int32_t data_size;
+            if (fread(&data_size, 4, 1, file) != 1) {
+                fprintf(stderr, "Error: Could not read data size\n");
+                exit(1);
+            }
 
+            // Read data
+            data = (uint8_t *)malloc(data_size);
+            if (data == NULL) {
+                fprintf(stderr, "Error: Could not allocate memory for data\n");
+                exit(1);
+            }
+            if (fread(data, data_size, 1, file) != 1) {
+                fprintf(stderr, "Error: Could not read data\n");
+                exit(1);
+            }
+
+            printf("Read %.4s block with size: %d\n", chunk_id, data_size);
+            break;
+        }
+        else {
+            int64_t chunk_size = 0;
+            fread(&chunk_size, 4, 1, file);
+            fseek(file, chunk_size, SEEK_CUR);
+            printf("Skipping chunk: %.4s with length %d\n", chunk_id, chunk_size);
+        }
+    }
+    if (data_found == 0) {
+        fprintf(stderr, "Error: Could not find data chunk\n");
+        exit(1);
+    }
     fclose(file);
 }
 
