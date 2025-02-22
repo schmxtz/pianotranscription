@@ -10,6 +10,7 @@ void read_audio_file(const char *filename, wav_header *header, uint8_t *data) {
     // Read header
     fread(header, sizeof(wav_header), 1, file);
 
+    // Read following id 
     // Read data
     // data = (uint8_t *)malloc(header->data_bytes);
     // if (data == NULL) {

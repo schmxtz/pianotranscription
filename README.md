@@ -36,3 +36,14 @@ So the goal of this repo, to give another shot at tackeling this problem. Writte
 6. Output: Visualize or save the spectrogram (e.g., as text, a CSV, or an image).
 7. Sheet generation: Based on given parameters (key, tempo, etc) have the sheets automatically generate
 
+---
+
+# TODO
+
+### Audio parser
+- [ ] Read file into memory  
+  - [x] Read wave-header chunk
+  - [ ] Read the remaining chunk types
+    - [ ] Associated data list chunk
+    - [ ] Data chunk
+ 
