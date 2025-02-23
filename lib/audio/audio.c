@@ -1,7 +1,7 @@
 #include "audio.h"
 
 
-void read_audio_file(const char *filename, wav_header *header, uint8_t *data) {
+void read_audio_file(const char *filename, wav_header *header, data_chunk *data_chunk) {
     FILE *file = fopen(filename, "rb");
     if (file == NULL) {
         fprintf(stderr, "Error: Could not open file %s\n", filename);
@@ -18,24 +18,24 @@ void read_audio_file(const char *filename, wav_header *header, uint8_t *data) {
     while (fread(chunk_id, 4, 1, file) == 1) {
         if (strncmp(chunk_id, "data", 4) == 0) {
             data_found = 1;
-            int32_t data_size;
-            if (fread(&data_size, 4, 1, file) != 1) {
+            if (fread(&data_chunk->size, 4, 1, file) != 1) {
                 fprintf(stderr, "Error: Could not read data size\n");
                 exit(1);
             }
 
             // Read data
-            data = (uint8_t *)malloc(data_size);
-            if (data == NULL) {
+            data_chunk->data = (uint8_t *)malloc(data_chunk->size);
+            if (data_chunk->data == NULL) {
                 fprintf(stderr, "Error: Could not allocate memory for data\n");
                 exit(1);
             }
-            if (fread(data, data_size, 1, file) != 1) {
+
+            if (fread(data_chunk->data, data_chunk->size, 1, file) != 1) {
                 fprintf(stderr, "Error: Could not read data\n");
                 exit(1);
             }
 
-            printf("Read %.4s block with size: %d\n", chunk_id, data_size);
+            printf("Read %.4s block with size: %d\n", chunk_id, data_chunk->size);
             break;
         }
         else {
