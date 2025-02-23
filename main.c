@@ -9,12 +9,12 @@ int main(int argc, char **argv) {
         exit(1);
     }
 
-    data_chunk *data = malloc(sizeof(data_chunk));
-    if (data == NULL) {
+    data_chunk *data_chunk = malloc(sizeof(data_chunk));
+    if (data_chunk == NULL) {
         fprintf(stderr, "Error: Could not allocate memory for data.\n");
         exit(1);
     }
-    read_audio_file("C:/Users/prime/pianotranscription/lib/audio/test_file.wav", header, data);
-    printf("%c%c%c%c\n", data->data[0], data->data[1], data->data[2], data->data[3]);
+    read_audio_file("C:/Users/prime/pianotranscription/lib/audio/test_file.wav", header, data_chunk);
+    // printf("%c%c%c APWDPWAD", data_chunk->data[5], data_chunk->data[6], data_chunk->data[7]);
     return 0;
 }

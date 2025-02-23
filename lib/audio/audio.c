@@ -29,20 +29,18 @@ void read_audio_file(const char *filename, wav_header *header, data_chunk *data_
                 fprintf(stderr, "Error: Could not allocate memory for data\n");
                 exit(1);
             }
-
             if (fread(data_chunk->data, data_chunk->size, 1, file) != 1) {
                 fprintf(stderr, "Error: Could not read data\n");
                 exit(1);
             }
-
-            printf("Read %.4s block with size: %d\n", chunk_id, data_chunk->size);
+            printf("Read \"%.4s\" block with size: %d\n", chunk_id, data_chunk->size);
             break;
         }
         else {
             int64_t chunk_size = 0;
             fread(&chunk_size, 4, 1, file);
             fseek(file, chunk_size, SEEK_CUR);
-            printf("Skipping chunk: %.4s with length %d\n", chunk_id, chunk_size);
+            printf("Skipping \"%.4s\" chunk with length %d\n", chunk_id, chunk_size);
         }
     }
     if (data_found == 0) {
