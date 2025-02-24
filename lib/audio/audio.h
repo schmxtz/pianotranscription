@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 // WAV header spec information:
 // https://docs.fileformat.com/audio/wav/
@@ -33,5 +34,6 @@ typedef struct data_chunk {
 
 void read_audio_file(const char *filename, wav_header *header, data_chunk *data);
 void debug_print_header(wav_header *header);
+void visualize_audio_data(wav_header *header, data_chunk *data, int num_samples);
 
 #endif

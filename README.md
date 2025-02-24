@@ -43,7 +43,10 @@ So the goal of this repo, to give another shot at tackeling this problem. Writte
 ### Audio parser
 - [ ] Read file into memory  
   - [x] Read wave-header chunk
-  - [ ] Read the remaining chunk types
+  - [x] Read the remaining chunk types
     - [ ] Associated data list chunk
-    - [ ] Data chunk
+    - [x] Data chunk
+- [ ] FFT implementation
+  - [ ]
+  use memcpy
  

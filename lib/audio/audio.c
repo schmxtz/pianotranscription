@@ -39,6 +39,8 @@ void read_audio_file(const char *filename, wav_header *header, data_chunk *data_
         else {
             int64_t chunk_size = 0;
             fread(&chunk_size, 4, 1, file);
+
+            // Move file pointer to the beginning of the next chunk
             fseek(file, chunk_size, SEEK_CUR);
             printf("Skipping \"%.4s\" chunk with length %d\n", chunk_id, chunk_size);
         }

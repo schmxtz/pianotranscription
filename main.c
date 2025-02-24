@@ -15,6 +15,6 @@ int main(int argc, char **argv) {
         exit(1);
     }
     read_audio_file("C:/Users/prime/pianotranscription/lib/audio/test_file.wav", header, data_chunk);
-    // printf("%c%c%c APWDPWAD", data_chunk->data[5], data_chunk->data[6], data_chunk->data[7]);
+
     return 0;
 }
