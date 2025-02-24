@@ -27,13 +27,14 @@ typedef struct wav_header {
     int16_t bit_depth; // Number of bits per sample
 } wav_header;
 
-typedef struct data_chunk {
+typedef struct wav_data_chunk {
     int32_t size;
-    uint8_t *data;
-} data_chunk;
+    uint8_t **channel_data;
+} wav_data_chunk;
 
-void read_audio_file(const char *filename, wav_header *header, data_chunk *data);
-void debug_print_header(wav_header *header);
-void visualize_audio_data(wav_header *header, data_chunk *data, int num_samples);
+void wav_read_audio_file(const char *filename, wav_header *wav_header, wav_data_chunk *wav_data_chunk);
+void wav_read_audio_header(FILE *file, wav_header *wav_header);
+void wav_read_data_chunk(FILE *file, wav_header *wav_header, wav_data_chunk *wav_data_chunk);
+void wav_print_header(wav_header *wav_header);
 
 #endif
