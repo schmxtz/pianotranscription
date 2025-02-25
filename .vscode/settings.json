@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "audio.h": "c",
-        "stdint.h": "c"
+        "stdint.h": "c",
+        "assert.h": "c"
     }
 }
