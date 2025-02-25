@@ -7,6 +7,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <assert.h>
+#include <complex.h>
 
 // WAV header spec information:
 // https://docs.fileformat.com/audio/wav/
@@ -30,12 +31,13 @@ typedef struct wav_header {
 
 typedef struct wav_data_chunk {
     int32_t size;
-    float **channel_data;
+    float complex **channel_data;
 } wav_data_chunk;
 
 void wav_read_audio_file(const char *filename, wav_header **header, wav_data_chunk **data_chunk);
 void wav_read_audio_header(FILE *file, wav_header **header);
 void wav_read_data_chunk(FILE *file, wav_header *header, wav_data_chunk **data_chunk);
 void wav_print_header(wav_header *header);
+void wav_print_recording_info(wav_header *header, wav_data_chunk *data_chunk);
 
 #endif

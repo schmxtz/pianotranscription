@@ -29,10 +29,15 @@ void wav_read_data_chunk(FILE *file, wav_header *header, wav_data_chunk **data_c
     while (fread(chunk_id, 4, 1, file) == 1) {
         if (strncmp(chunk_id, "data", 4) == 0) {
             *data_chunk = malloc(sizeof(wav_data_chunk));
+            if (*data_chunk == NULL) {
+                fprintf(stderr, "Error: Could not allocate memory for data chunk\n");
+                exit(1);
+            }
             if (fread(&((*data_chunk)->size), 4, 1, file) != 1) {
                 fprintf(stderr, "Error: Could not read data size\n");
                 exit(1);
             }
+
             uint8_t *data = (uint8_t *)malloc((*data_chunk)->size);
             if (data == NULL) {
                 fprintf(stderr, "Error: Could not allocate memory for data\n");
@@ -42,17 +47,40 @@ void wav_read_data_chunk(FILE *file, wav_header *header, wav_data_chunk **data_c
                 fprintf(stderr, "Error: Could not read data\n");
                 exit(1);
             }
-            printf("Read \"%.4s\" block with size: %d\n", chunk_id, (*data_chunk)->size);
-            uint32_t num_samples = (*data_chunk)->size / (header->sample_alignment);
-            assert(num_samples * header->sample_alignment == (*data_chunk)->size);
-            printf("Number of samples: %d\n", num_samples);
-            printf("Length of recording: %d\n", num_samples / header->sample_rate);
-            // // Copy data to their respective channels
-            // data_chunk->channel_data = (uint8_t **)malloc(header->num_channels * sizeof(uint8_t *));
-            // if (data_chunk->channel_data == NULL) {
-            //     fprintf(stderr, "Error: Could not allocate memory for channel data\n");
-            //     exit(1);
-            // }
+            if ((*data_chunk)->size % header->sample_alignment != 0) {
+                fprintf(stderr, "Data size is not a multiple of sample alignment. There might be some error in the recording.\n");
+            }
+
+            // Copy data to their respective channels
+            (*data_chunk)->channel_data = malloc(sizeof(float complex *) * header->num_channels);
+            if ((*data_chunk)->channel_data == NULL) {
+                fprintf(stderr, "Error: Could not allocate memory for channel data\n");
+                exit(1);
+            }
+
+            int32_t size = (*data_chunk)->size;
+            int32_t num_channels = header->num_channels;
+            int32_t sample_alignment = header->sample_alignment;
+            int32_t bytes_per_sample = header->bit_depth / 8;
+            int32_t num_samples = size / sample_alignment;
+            // Init channel data memory
+            for (int i = 0; i < num_channels; i++) {
+                (*data_chunk)->channel_data[i] = malloc(sizeof(float complex) * num_samples);
+                if ((*data_chunk)->channel_data[i] == NULL) {
+                    fprintf(stderr, "Error: Could not allocate memory for channel data\n");
+                    exit(1);
+                }
+            }
+            // Process data and put into channel data
+            int32_t sample;
+            int32_t data_index = 0;
+            for (int sample_index = 0; sample_index < num_samples; sample_index++) {
+                for (int channel_index = 0; channel_index < num_channels; channel_index++) {
+                    data_index = sample_index * sample_alignment + channel_index * bytes_per_sample;
+                    sample = 0;
+                    // TODO: Read bytes and create complex                    
+                }
+            }    
             // for (int i = 0; i < header->num_channels; i++) {
             //     data_chunk->channel_data[i] = (uint8_t *)malloc(data_chunk->size / header->num_channels);
             //     if (data_chunk->channel_data[i] == NULL) {
@@ -64,7 +92,7 @@ void wav_read_data_chunk(FILE *file, wav_header *header, wav_data_chunk **data_c
             // for (int i = 0; i < data_chunk->size; i += 2) {
                 
             // }
-            // free(data);
+            free(data);
             break;
         }
         else {
@@ -83,15 +111,24 @@ void wav_read_data_chunk(FILE *file, wav_header *header, wav_data_chunk **data_c
 }
 
 void wav_print_header(wav_header *header) {
-    printf("header->riff_header: %.4s\n", header->riff_header);
-    printf("header->wav_size: %d\n", header->wav_size);
-    printf("header->wave_header: %.4s\n", header->wave_header);
-    printf("header->fmt_header: %.4s\n", header->fmt_header);
-    printf("header->fmt_chunk_size: %d\n", header->fmt_chunk_size);
-    printf("header->audio_format: %d\n", header->audio_format);
-    printf("header->num_channels: %d\n", header->num_channels);
-    printf("header->sample_rate: %d\n", header->sample_rate);
-    printf("header->byte_rate: %d\n", header->byte_rate);
-    printf("header->sample_alignment: %d\n", header->sample_alignment);
-    printf("header->bit_depth: %d\n", header->bit_depth);
+    printf("----- WAV file header: -----\n");
+    printf("RIFF header: %.4s\n", header->riff_header);
+    printf("File size: %d\n", header->wav_size);
+    printf("WAVE header: %.4s\n", header->wave_header);
+    printf("Format header: %.4s\n", header->fmt_header);
+    printf("Format chunk size: %d\n", header->fmt_chunk_size);
+    printf("Audio format (1: PCM, 3: IEEE Float): %d\n", header->audio_format);
+    printf("Number of channels: %d\n", header->num_channels);
+    printf("Sample rate: %d\n", header->sample_rate);
+    printf("Byte rate: %d\n", header->byte_rate);
+    printf("Sample alignment in bytes: %d\n", header->sample_alignment);
+    printf("Bits per sample (per channel): %d\n", header->bit_depth);
+}
+
+void wav_print_recording_info(wav_header *header, wav_data_chunk *data_chunk) {
+    uint32_t num_samples = data_chunk->size / header->sample_alignment;
+    uint32_t recording_length_seconds = num_samples / header->sample_rate;
+    printf("--- WAV file information: ---\n");
+    printf("Number of samples: %d\n", num_samples);
+    printf("Length of recording: %dm %ds\n", recording_length_seconds / 60, recording_length_seconds % 60);
 }
