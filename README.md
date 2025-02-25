@@ -43,10 +43,12 @@ So the goal of this repo, to give another shot at tackeling this problem. Writte
 ### Audio parser
 - [ ] Read file into memory  
   - [x] Read wave-header chunk
+    - [ ] support RIFX header
+    - [ ] support data format other than PCM (e.g. IEEE float)
   - [x] Read the remaining chunk types
     - [ ] Associated data list chunk
     - [x] Data chunk
 - [ ] FFT implementation
   - [ ]
-  use memcpy
+
  

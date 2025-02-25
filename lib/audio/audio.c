@@ -21,6 +21,15 @@ void wav_read_audio_header(FILE *file, wav_header **header) {
     }
 
     fread(*header, sizeof(wav_header), 1, file);
+    // TODO: fix these conditions
+    if((*header)->audio_format != 1) {
+        fprintf(stderr, "Audio format other than PCM not yet supported.\n");
+        exit(1);
+    }
+    if((*header)->bit_depth % 8 != 0) {
+        fprintf(stderr, "Bits per sample has to be multiple of 8 for now.\n");
+        exit(1);
+    }
 }
 
 void wav_read_data_chunk(FILE *file, wav_header *header, wav_data_chunk **data_chunk) {
@@ -77,21 +86,10 @@ void wav_read_data_chunk(FILE *file, wav_header *header, wav_data_chunk **data_c
             for (int sample_index = 0; sample_index < num_samples; sample_index++) {
                 for (int channel_index = 0; channel_index < num_channels; channel_index++) {
                     data_index = sample_index * sample_alignment + channel_index * bytes_per_sample;
-                    sample = 0;
+                    memcpy(&sample, data + data_index, bytes_per_sample);
                     // TODO: Read bytes and create complex                    
                 }
             }    
-            // for (int i = 0; i < header->num_channels; i++) {
-            //     data_chunk->channel_data[i] = (uint8_t *)malloc(data_chunk->size / header->num_channels);
-            //     if (data_chunk->channel_data[i] == NULL) {
-            //         fprintf(stderr, "Error: Could not allocate memory for channel data\n");
-            //         exit(1);
-            //     }
-            // }
-            
-            // for (int i = 0; i < data_chunk->size; i += 2) {
-                
-            // }
             free(data);
             break;
         }
