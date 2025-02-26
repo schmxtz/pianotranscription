@@ -37,6 +37,9 @@ typedef struct wav_data_chunk {
 void wav_read_audio_file(const char *filename, wav_header **header, wav_data_chunk **data_chunk);
 void wav_read_audio_header(FILE *file, wav_header **header);
 void wav_read_data_chunk(FILE *file, wav_header *header, wav_data_chunk **data_chunk);
+void wav_read_byte_data(FILE *file, wav_header *header, wav_data_chunk **data_chunk, uint8_t *data);
+void wav_read_short_data(FILE *file, wav_header *header, wav_data_chunk **data_chunk, uint8_t *data);
+void wav_read_int_data(FILE *file, wav_header *header, wav_data_chunk **data_chunk, uint8_t *data);
 void wav_print_header(wav_header *header);
 void wav_print_recording_info(wav_header *header, wav_data_chunk *data_chunk);
 
