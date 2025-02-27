@@ -31,7 +31,7 @@ typedef struct wav_header {
 
 typedef struct wav_data_chunk {
     int32_t size;
-    int32_t **channel_data;
+    int32_t *channel_data;
 } wav_data_chunk;
 
 void wav_read_audio_file(const char *filename, wav_header **header, wav_data_chunk **data_chunk);

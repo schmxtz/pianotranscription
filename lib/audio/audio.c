@@ -57,26 +57,16 @@ void wav_read_data_chunk(FILE *file, wav_header *header, wav_data_chunk **data_c
             }
 
             // Copy data to their respective channels
-            (*data_chunk)->channel_data = malloc(sizeof(float complex *) * header->num_channels);
+            int32_t size = (*data_chunk)->size;
+            int32_t num_channels = header->num_channels;
+            int32_t sample_alignment = header->sample_alignment;
+            int32_t num_samples = size / sample_alignment;
+            (*data_chunk)->channel_data = (int32_t *) malloc(sizeof(int32_t *) * num_channels * num_samples);
             if ((*data_chunk)->channel_data == NULL) {
                 fprintf(stderr, "Error: Could not allocate memory for channel data\n");
                 exit(1);
             }
 
-            int32_t size = (*data_chunk)->size;
-            int32_t num_channels = header->num_channels;
-            int32_t sample_alignment = header->sample_alignment;
-            int32_t num_samples = size / sample_alignment;
-            // Init channel data memory
-            for (int i = 0; i < num_channels; i++) {
-                (*data_chunk)->channel_data[i] = malloc(sizeof(int32_t) * num_samples);
-                if ((*data_chunk)->channel_data[i] == NULL) {
-                    fprintf(stderr, "Error: Could not allocate memory for channel data\n");
-                    exit(1);
-                }
-            }
-
-            // TODO: Check whether normalizing the data is necessary
             if (header->bit_depth == 8) {
                 wav_read_byte_data(header, data_chunk, data);
             }
@@ -119,7 +109,7 @@ void wav_read_byte_data(wav_header *header, wav_data_chunk **data_chunk, uint8_t
     for (int sample_index = 0; sample_index < num_samples; sample_index++) {
         for (int channel_index = 0; channel_index < num_channels; channel_index++) {
             data_index = sample_index * sample_alignment + channel_index * bytes_per_sample;
-            (*data_chunk)->channel_data[channel_index][sample_index] = (int32_t) data[data_index] + INT8_MIN;
+            (*data_chunk)->channel_data[channel_index * num_samples + sample_index] = data[data_index] + INT8_MIN;
         }
     }   
 }
@@ -134,7 +124,7 @@ void wav_read_short_data(wav_header *header, wav_data_chunk **data_chunk, uint8_
     for (int sample_index = 0; sample_index < num_samples; sample_index++) {
         for (int channel_index = 0; channel_index < num_channels; channel_index++) {
             data_index = sample_index * sample_alignment + channel_index * bytes_per_sample;
-            (*data_chunk)->channel_data[channel_index][sample_index] = (data[data_index] | data[data_index + 1] << 8);
+            (*data_chunk)->channel_data[channel_index * num_samples + sample_index] = (int16_t) (data[data_index] | data[data_index + 1] << 8);
         }
     }    
 }
@@ -150,7 +140,7 @@ void wav_read_int_data(wav_header *header, wav_data_chunk **data_chunk, uint8_t 
     for (int sample_index = 0; sample_index < num_samples; sample_index++) {
         for (int channel_index = 0; channel_index < num_channels; channel_index++) {
             data_index = sample_index * sample_alignment + channel_index * bytes_per_sample;
-            (*data_chunk)->channel_data[channel_index][sample_index] = (data[data_index] | data[data_index + 1] << 8 | data[data_index + 2] << 16 | data[data_index + 3] << 24);
+            (*data_chunk)->channel_data[channel_index * num_samples + sample_index] = (data[data_index] | data[data_index + 1] << 8 | data[data_index + 2] << 16 | data[data_index + 3] << 24);
         }
     }   
 }
