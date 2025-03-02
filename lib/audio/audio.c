@@ -61,7 +61,7 @@ void wav_read_data_chunk(FILE *file, wav_header *header, wav_data_chunk **data_c
             int32_t num_channels = header->num_channels;
             int32_t sample_alignment = header->sample_alignment;
             int32_t num_samples = size / sample_alignment;
-            (*data_chunk)->channel_data = (int32_t *) malloc(sizeof(int32_t *) * num_channels * num_samples);
+            (*data_chunk)->channel_data = (double *) malloc(sizeof(double *) * num_channels * num_samples);
             if ((*data_chunk)->channel_data == NULL) {
                 fprintf(stderr, "Error: Could not allocate memory for channel data\n");
                 exit(1);
@@ -109,7 +109,7 @@ void wav_read_byte_data(wav_header *header, wav_data_chunk **data_chunk, uint8_t
     for (int sample_index = 0; sample_index < num_samples; sample_index++) {
         for (int channel_index = 0; channel_index < num_channels; channel_index++) {
             data_index = sample_index * sample_alignment + channel_index * bytes_per_sample;
-            (*data_chunk)->channel_data[channel_index * num_samples + sample_index] = data[data_index] + INT8_MIN;
+            (*data_chunk)->channel_data[channel_index * num_samples + sample_index] = (data[data_index] + INT8_MIN);
         }
     }   
 }
@@ -124,7 +124,7 @@ void wav_read_short_data(wav_header *header, wav_data_chunk **data_chunk, uint8_
     for (int sample_index = 0; sample_index < num_samples; sample_index++) {
         for (int channel_index = 0; channel_index < num_channels; channel_index++) {
             data_index = sample_index * sample_alignment + channel_index * bytes_per_sample;
-            (*data_chunk)->channel_data[channel_index * num_samples + sample_index] = (int16_t) (data[data_index] | data[data_index + 1] << 8);
+            (*data_chunk)->channel_data[channel_index * num_samples + sample_index] = ((int16_t) (data[data_index] | data[data_index + 1] << 8));
         }
     }    
 }
